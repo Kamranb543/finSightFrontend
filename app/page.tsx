@@ -50,23 +50,23 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background relative overflow-hidden">
       {/* Background Glow Effect */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[400px] lg:w-[500px] h-[300px] sm:h-[400px] lg:h-[500px] bg-primary/20 rounded-full blur-[80px] sm:blur-[100px] pointer-events-none" />
 
-      <div className="z-10 w-full max-w-md space-y-8 px-4">
-        <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight text-foreground">
+      <div className="z-10 w-full max-w-md space-y-6 sm:space-y-8 px-4 sm:px-6">
+        <div className="text-center space-y-1 sm:space-y-2">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-foreground">
             Welcome to <span className="text-primary">FinSight</span>
           </h1>
-          <p className="text-muted-foreground">The Future of Financial Management.</p>
+          <p className="text-sm sm:text-base text-muted-foreground">The Future of Financial Management.</p>
         </div>
 
         <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-xl">
-          <CardHeader>
+          <CardHeader className="p-4 sm:p-6">
             <CardTitle className="sr-only">Login</CardTitle>
             <CardDescription className="sr-only">Enter your credentials to access your account</CardDescription>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
+          <CardContent className="p-4 sm:p-6 pt-0">
+            <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -117,12 +117,12 @@ export default function LoginPage() {
 
               <Button 
                 type="submit" 
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-5 sm:py-6 text-sm sm:text-base"
                 disabled={isLoading}
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
                     Logging in...
                   </>
                 ) : (
@@ -131,11 +131,11 @@ export default function LoginPage() {
               </Button>
             </form>
           </CardContent>
-          <CardFooter className="flex flex-col gap-4">
-            <div className="text-center text-sm text-primary hover:underline cursor-pointer">
+          <CardFooter className="flex flex-col gap-3 sm:gap-4 p-4 sm:p-6 pt-0">
+            <div className="text-center text-xs sm:text-sm text-primary hover:underline cursor-pointer">
               Forgot Password?
             </div>
-            <div className="text-center text-sm text-muted-foreground">
+            <div className="text-center text-xs sm:text-sm text-muted-foreground">
               Don&apos;t have an account? <span className="text-primary hover:underline cursor-pointer">Sign Up</span>
             </div>
           </CardFooter>
@@ -143,9 +143,9 @@ export default function LoginPage() {
       </div>
 
       {/* Floating Action Button */}
-      <div className="absolute bottom-8 right-8">
-        <div className="h-12 w-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-lg shadow-green-500/20 cursor-pointer hover:scale-110 transition-transform">
-          <Lightbulb className="h-6 w-6 text-white" />
+      <div className="absolute bottom-4 right-4 sm:bottom-8 sm:right-8">
+        <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-lg shadow-green-500/20 cursor-pointer hover:scale-110 transition-transform">
+          <Lightbulb className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
         </div>
       </div>
     </div>

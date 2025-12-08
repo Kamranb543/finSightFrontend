@@ -39,32 +39,32 @@ export default function WorkflowsPage() {
     return (
         <ProtectedRoute>
             <AppLayout title="Accounts Payable">
-                <div className="grid gap-6 md:grid-cols-2">
+                <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2">
                     {/* Accounts Payable */}
                     <Card className="bg-card/50 backdrop-blur-sm border-border/50">
-                        <CardHeader>
-                            <CardTitle>Accounts Payable</CardTitle>
-                            <CardDescription>Review and approve upcoming bills.</CardDescription>
+                        <CardHeader className="p-4 sm:p-6">
+                            <CardTitle className="text-base sm:text-lg">Accounts Payable</CardTitle>
+                            <CardDescription className="text-xs sm:text-sm">Review and approve upcoming bills.</CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-4">
+                        <CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6 pt-0">
                             {payables.map((item) => (
                                 <div
                                     key={item.id}
-                                    className="flex items-center justify-between p-4 rounded-lg bg-muted/30 border border-border/50"
+                                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg bg-muted/30 border border-border/50"
                                 >
-                                    <div>
-                                        <p className="font-semibold text-foreground">{item.vendor}</p>
-                                        <p className="text-sm text-muted-foreground">Due: {item.dueDate}</p>
+                                    <div className="min-w-0 flex-1">
+                                        <p className="font-semibold text-foreground text-sm sm:text-base truncate">{item.vendor}</p>
+                                        <p className="text-xs sm:text-sm text-muted-foreground">Due: {item.dueDate}</p>
                                     </div>
-                                    <div className="flex items-center gap-4">
-                                        <span className="text-destructive font-bold">${item.amount.toLocaleString()}</span>
+                                    <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
+                                        <span className="text-destructive font-bold text-sm sm:text-base">${item.amount.toLocaleString()}</span>
                                         {item.approved ? (
-                                            <span className="text-sm text-muted-foreground">Approved</span>
+                                            <span className="text-xs sm:text-sm text-muted-foreground">Approved</span>
                                         ) : (
                                             <Button
                                                 size="sm"
                                                 onClick={() => handleApprove(item.id)}
-                                                className="bg-primary hover:bg-primary/90"
+                                                className="bg-primary hover:bg-primary/90 text-xs sm:text-sm"
                                             >
                                                 Approve
                                             </Button>
@@ -77,26 +77,26 @@ export default function WorkflowsPage() {
 
                     {/* Accounts Receivable */}
                     <Card className="bg-card/50 backdrop-blur-sm border-border/50">
-                        <CardHeader>
-                            <CardTitle>Accounts Receivable</CardTitle>
-                            <CardDescription>Track outstanding invoices.</CardDescription>
+                        <CardHeader className="p-4 sm:p-6">
+                            <CardTitle className="text-base sm:text-lg">Accounts Receivable</CardTitle>
+                            <CardDescription className="text-xs sm:text-sm">Track outstanding invoices.</CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-4">
+                        <CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6 pt-0">
                             {receivables.map((item) => (
                                 <div
                                     key={item.id}
-                                    className="flex items-center justify-between p-4 rounded-lg bg-muted/30 border border-border/50"
+                                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg bg-muted/30 border border-border/50"
                                 >
-                                    <div>
-                                        <p className="font-semibold text-foreground">{item.client}</p>
-                                        <p className="text-sm text-muted-foreground">{item.status}</p>
+                                    <div className="min-w-0 flex-1">
+                                        <p className="font-semibold text-foreground text-sm sm:text-base truncate">{item.client}</p>
+                                        <p className="text-xs sm:text-sm text-muted-foreground">{item.status}</p>
                                     </div>
-                                    <div className="flex items-center gap-4">
-                                        <span className="text-green-500 font-bold">${item.amount.toLocaleString()}</span>
+                                    <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
+                                        <span className="text-green-500 font-bold text-sm sm:text-base">${item.amount.toLocaleString()}</span>
                                         <Button
                                             size="sm"
                                             variant="outline"
-                                            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                                            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground text-xs sm:text-sm"
                                         >
                                             Send Reminder
                                         </Button>

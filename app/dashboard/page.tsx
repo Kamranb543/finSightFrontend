@@ -113,59 +113,59 @@ export default function DashboardPage() {
   return (
     <ProtectedRoute>
       <AppLayout title="Dashboard">
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Stats Row */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             <Card className="bg-card/50 backdrop-blur-sm border-border/50">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Cash Balance</CardTitle>
+                <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Cash Balance</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className={`text-2xl font-bold ${stats.cashBalance >= 0 ? "text-primary" : "text-destructive"}`}>
+                <div className={`text-lg sm:text-xl lg:text-2xl font-bold ${stats.cashBalance >= 0 ? "text-primary" : "text-destructive"}`}>
                   ${stats.cashBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
               </CardContent>
             </Card>
             <Card className="bg-card/50 backdrop-blur-sm border-border/50">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Net Income</CardTitle>
+                <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Net Income</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className={`text-2xl font-bold ${stats.netIncome >= 0 ? "text-green-500" : "text-destructive"}`}>
+                <div className={`text-lg sm:text-xl lg:text-2xl font-bold ${stats.netIncome >= 0 ? "text-green-500" : "text-destructive"}`}>
                   ${stats.netIncome.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
               </CardContent>
             </Card>
             <Card className="bg-card/50 backdrop-blur-sm border-border/50">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Total Income</CardTitle>
+                <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Total Income</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-green-500">
+                <div className="text-lg sm:text-xl lg:text-2xl font-bold text-green-500">
                   ${stats.totalIncome.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
               </CardContent>
             </Card>
             <Card className="bg-card/50 backdrop-blur-sm border-border/50">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Total Expenses</CardTitle>
+                <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Total Expenses</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-destructive">
+                <div className="text-lg sm:text-xl lg:text-2xl font-bold text-destructive">
                   ${stats.totalExpenses.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-7">
+          <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
             {/* Chart */}
-            <Card className="col-span-4 bg-card/50 backdrop-blur-sm border-border/50">
+            <Card className="lg:col-span-4 bg-card/50 backdrop-blur-sm border-border/50">
               <CardHeader>
-                <CardTitle>Cash Flow</CardTitle>
+                <CardTitle className="text-base sm:text-lg">Cash Flow</CardTitle>
               </CardHeader>
-              <CardContent className="pl-2">
-                <div className="h-[300px] w-full">
+              <CardContent className="pl-1 sm:pl-2">
+                <div className="h-[250px] sm:h-[300px] lg:h-[350px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={cashFlowData}>
                       <defs>
@@ -204,41 +204,41 @@ export default function DashboardPage() {
             </Card>
 
             {/* Insights */}
-            <Card className="col-span-3 bg-card/50 backdrop-blur-sm border-border/50">
+            <Card className="lg:col-span-3 bg-card/50 backdrop-blur-sm border-border/50">
               <CardHeader>
-                <CardTitle>FinSight Insights</CardTitle>
+                <CardTitle className="text-base sm:text-lg">FinSight Insights</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex gap-4">
-                  <div className="mt-1 bg-green-500/10 p-2 rounded-full h-fit">
-                    <TrendingUp className="h-5 w-5 text-green-500" />
+              <CardContent className="space-y-4 sm:space-y-6">
+                <div className="flex gap-3 sm:gap-4">
+                  <div className="mt-1 bg-green-500/10 p-1.5 sm:p-2 rounded-full h-fit flex-shrink-0">
+                    <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground">Summary</h4>
-                    <p className="text-sm text-muted-foreground">
+                  <div className="min-w-0">
+                    <h4 className="font-semibold text-foreground text-sm sm:text-base">Summary</h4>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       {transactions.length} total transactions recorded.
                       {stats.netIncome >= 0 ? " You're in profit!" : " Expenses exceed income."}
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <div className="mt-1 bg-orange-500/10 p-2 rounded-full h-fit">
-                    <AlertCircle className="h-5 w-5 text-orange-500" />
+                <div className="flex gap-3 sm:gap-4">
+                  <div className="mt-1 bg-orange-500/10 p-1.5 sm:p-2 rounded-full h-fit flex-shrink-0">
+                    <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-orange-500" />
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground">Pending Approvals</h4>
-                    <p className="text-sm text-muted-foreground">
+                  <div className="min-w-0">
+                    <h4 className="font-semibold text-foreground text-sm sm:text-base">Pending Approvals</h4>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       {transactions.filter((t) => !t.is_approved).length} transactions awaiting approval.
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <div className="mt-1 bg-blue-500/10 p-2 rounded-full h-fit">
-                    <ArrowUpRight className="h-5 w-5 text-blue-500" />
+                <div className="flex gap-3 sm:gap-4">
+                  <div className="mt-1 bg-blue-500/10 p-1.5 sm:p-2 rounded-full h-fit flex-shrink-0">
+                    <ArrowUpRight className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground">Breakdown</h4>
-                    <p className="text-sm text-muted-foreground">
+                  <div className="min-w-0">
+                    <h4 className="font-semibold text-foreground text-sm sm:text-base">Breakdown</h4>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       {transactions.filter((t) => t.type === "INCOME").length} income &amp; {transactions.filter((t) => t.type === "EXPENSE").length} expense transactions.
                     </p>
                   </div>

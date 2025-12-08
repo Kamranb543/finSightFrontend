@@ -14,47 +14,47 @@ export default function SettingsPage() {
     return (
         <ProtectedRoute>
             <AppLayout title="Settings">
-                <div className="max-w-4xl space-y-6">
-                    <div className="space-y-2">
-                        <h2 className="text-2xl font-bold tracking-tight">Appearance</h2>
-                        <p className="text-muted-foreground">
+                <div className="max-w-4xl space-y-4 sm:space-y-6">
+                    <div className="space-y-1 sm:space-y-2">
+                        <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Appearance</h2>
+                        <p className="text-sm sm:text-base text-muted-foreground">
                             Customize the look and feel of your workspace.
                         </p>
                     </div>
 
                     <Card className="bg-card/50 backdrop-blur-sm border-border/50">
-                        <CardHeader>
-                            <CardTitle>Appearance</CardTitle>
-                            <CardDescription>
+                        <CardHeader className="p-4 sm:p-6">
+                            <CardTitle className="text-base sm:text-lg">Appearance</CardTitle>
+                            <CardDescription className="text-xs sm:text-sm">
                                 Customize the look and feel of your workspace.
                             </CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-8">
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <Label htmlFor="mode" className="text-base font-medium">Mode</Label>
+                        <CardContent className="space-y-6 sm:space-y-8 p-4 sm:p-6 pt-0">
+                            <div className="space-y-3 sm:space-y-4">
+                                <div className="flex items-center justify-between gap-4">
+                                    <Label htmlFor="mode" className="text-sm sm:text-base font-medium">Mode</Label>
                                     <div className="flex items-center gap-2">
-                                        <span className={cn("text-sm", theme === "light" ? "text-foreground font-medium" : "text-muted-foreground")}>Light</span>
+                                        <span className={cn("text-xs sm:text-sm", theme === "light" ? "text-foreground font-medium" : "text-muted-foreground")}>Light</span>
                                         <Switch
                                             id="mode"
                                             checked={theme === "dark"}
                                             onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
                                         />
-                                        <span className={cn("text-sm", theme === "dark" ? "text-foreground font-medium" : "text-muted-foreground")}>Dark</span>
+                                        <span className={cn("text-xs sm:text-sm", theme === "dark" ? "text-foreground font-medium" : "text-muted-foreground")}>Dark</span>
                                     </div>
                                 </div>
                                 <div className="h-[1px] bg-border" />
                             </div>
 
-                            <div className="space-y-4">
-                                <Label className="text-base font-medium">Color Theme</Label>
-                                <div className="flex items-center gap-4">
+                            <div className="space-y-3 sm:space-y-4">
+                                <Label className="text-sm sm:text-base font-medium">Color Theme</Label>
+                                <div className="flex items-center gap-3 sm:gap-4">
                                     {["blue", "red", "green", "purple"].map((c) => (
                                         <button
                                             key={c}
                                             onClick={() => setColor(c as any)}
                                             className={cn(
-                                                "h-10 w-10 rounded-full border-2 flex items-center justify-center transition-all",
+                                                "h-9 w-9 sm:h-10 sm:w-10 rounded-full border-2 flex items-center justify-center transition-all",
                                                 color === c ? "border-foreground scale-110" : "border-transparent hover:scale-105"
                                             )}
                                             style={{
@@ -65,7 +65,7 @@ export default function SettingsPage() {
                                                                 "oklch(0.7 0.15 320)"
                                             }}
                                         >
-                                            {color === c && <div className="h-3 w-3 rounded-full bg-white" />}
+                                            {color === c && <div className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-white" />}
                                         </button>
                                     ))}
                                 </div>

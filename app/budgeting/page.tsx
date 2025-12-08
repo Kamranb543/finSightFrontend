@@ -32,23 +32,23 @@ export default function BudgetingPage() {
     return (
         <ProtectedRoute>
             <AppLayout title="Budget vs. Actuals">
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                     <Card className="bg-card/50 backdrop-blur-sm border-border/50">
-                        <CardHeader>
-                            <CardTitle>Budget vs. Actuals</CardTitle>
-                            <CardDescription>
+                        <CardHeader className="p-4 sm:p-6">
+                            <CardTitle className="text-base sm:text-lg">Budget vs. Actuals</CardTitle>
+                            <CardDescription className="text-xs sm:text-sm">
                                 Track your spending against your budget in real-time. FinSight flags categories that are over budget.
                             </CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-6">
+                        <CardContent className="space-y-4 sm:space-y-6 p-4 sm:p-6 pt-0">
                             {budgetCategories.map((category) => {
                                 const percentage = getPercentage(category.spent, category.budget);
                                 const isOverBudget = percentage > 100;
                                 return (
                                     <div key={category.id} className="space-y-2">
-                                        <div className="flex items-center justify-between">
-                                            <span className="font-medium text-foreground">{category.name}</span>
-                                            <span className="text-sm text-muted-foreground">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <span className="font-medium text-foreground text-sm sm:text-base truncate">{category.name}</span>
+                                            <span className="text-xs sm:text-sm text-muted-foreground flex-shrink-0">
                                                 ${category.spent.toLocaleString()} / ${category.budget.toLocaleString()}{" "}
                                                 <span className={cn(isOverBudget ? "text-destructive" : "text-muted-foreground")}>
                                                     ({percentage}%)

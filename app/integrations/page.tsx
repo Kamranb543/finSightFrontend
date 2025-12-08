@@ -27,19 +27,19 @@ export default function IntegrationsPage() {
             <AppLayout title="Seamless Integrations">
                 <div className="flex justify-center">
                     <Card className="bg-card/50 backdrop-blur-sm border-border/50 max-w-3xl w-full">
-                        <CardHeader>
-                            <CardTitle>Seamless Integrations</CardTitle>
-                            <CardDescription>
+                        <CardHeader className="p-4 sm:p-6">
+                            <CardTitle className="text-base sm:text-lg">Seamless Integrations</CardTitle>
+                            <CardDescription className="text-xs sm:text-sm">
                                 Connect your favorite business tools to create a single source of truth for your financial data.
                             </CardDescription>
                         </CardHeader>
-                        <CardContent>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <CardContent className="p-4 sm:p-6 pt-0">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                                 {integrations.map((integration) => (
                                     <div
                                         key={integration.id}
                                         className={cn(
-                                            "flex flex-col items-center justify-center p-6 rounded-lg border border-border/50 transition-colors",
+                                            "flex flex-col items-center justify-center p-4 sm:p-6 rounded-lg border border-border/50 transition-colors",
                                             integration.comingSoon
                                                 ? "bg-muted/20 opacity-60"
                                                 : "bg-muted/30 hover:bg-muted/50 cursor-pointer"
@@ -47,17 +47,17 @@ export default function IntegrationsPage() {
                                     >
                                         <div
                                             className={cn(
-                                                "w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm mb-3",
+                                                "w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm mb-2 sm:mb-3",
                                                 integration.color
                                             )}
                                         >
                                             {integration.label}
                                         </div>
-                                        <p className="font-medium text-foreground text-center">{integration.name}</p>
+                                        <p className="font-medium text-foreground text-center text-xs sm:text-sm">{integration.name}</p>
                                         {integration.comingSoon ? (
-                                            <span className="text-xs text-muted-foreground mt-1">Coming Soon</span>
+                                            <span className="text-[10px] sm:text-xs text-muted-foreground mt-1">Coming Soon</span>
                                         ) : (
-                                            <button className="text-sm text-primary hover:underline mt-1">
+                                            <button className="text-xs sm:text-sm text-primary hover:underline mt-1">
                                                 Connect
                                             </button>
                                         )}
