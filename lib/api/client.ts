@@ -63,6 +63,7 @@ async function apiRequest<T>(
   } = options;
 
   const url = `${API_BASE_URL}${endpoint}`;
+  console.log(url);
   const requestOptions: RequestInit = {
     ...fetchOptions,
     credentials: skipCredentials ? "omit" : "include",
