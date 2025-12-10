@@ -49,17 +49,17 @@ export default function LoginPage() {
     } else {
       setPassword(value);
     }
-    // Clear error when user starts typing
-    if (error) {
-      dispatch(clearError());
-    }
+    // Don't clear error immediately - let user see it
   };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(clearError());
     // Extract username from email (part before @)
     const username = email.split("@")[0];
+    if (!username || !password) {
+      return;
+    }
+    dispatch(clearError());
     dispatch(login({ username, password }));
   };
 

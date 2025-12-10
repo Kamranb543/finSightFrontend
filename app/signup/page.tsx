@@ -82,11 +82,12 @@ export default function SignupPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(clearError());
     
     if (!validateForm()) {
       return;
     }
+
+    dispatch(clearError());
 
     const payload: {
       username: string;
@@ -121,10 +122,7 @@ export default function SignupPage() {
         return newErrors;
       });
     }
-    // Clear auth error when user starts typing
-    if (error) {
-      dispatch(clearError());
-    }
+    // Don't clear error immediately - let user see it
   };
 
   return (
