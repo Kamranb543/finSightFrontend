@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/store/slices/authSlice";
-import { AppDispatch } from "@/store/store";
+import { AppDispatch, RootState } from "@/store/store";
 import {
   LayoutDashboard,
   FileText,
@@ -19,6 +19,7 @@ import {
   Menu,
   ChevronLeft,
   ChevronRight,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -40,6 +41,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
+  const { isLoading } = useSelector((state: RootState) => state.auth);
 
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -143,13 +145,19 @@ export function Sidebar() {
           <Button
             variant="ghost"
             onClick={handleLogout}
+            disabled={isLoading}
             className={cn(
               "w-full flex items-center gap-2 sm:gap-3 text-sidebar-foreground/70 hover:text-destructive hover:bg-destructive/10 text-xs sm:text-sm",
-              collapsed ? "justify-center px-0" : "justify-start"
+              collapsed ? "justify-center px-0" : "justify-start",
+              isLoading && "opacity-70 cursor-not-allowed"
             )}
           >
-            <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
-            {!collapsed && <span className="truncate">Logout</span>}
+            {isLoading ? (
+              <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
+            ) : (
+              <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
+            )}
+            {!collapsed && <span className="truncate">{isLoading ? "Logging out..." : "Logout"}</span>}
           </Button>
 
           {!collapsed && (

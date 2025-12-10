@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Lightbulb, Eye, EyeOff, Loader2 } from "lucide-react";
+import Link from "next/link";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -22,6 +23,9 @@ export default function LoginPage() {
   const { isAuthenticated, isLoading, isChecked, error } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
+    // Clear any previous errors when component mounts
+    dispatch(clearError());
+    
     // Check auth status on mount
     if (!isChecked && !isLoading) {
       dispatch(fetchCurrentUser());
@@ -39,6 +43,18 @@ export default function LoginPage() {
     return null;
   }
 
+  const handleChange = (field: "email" | "password", value: string) => {
+    if (field === "email") {
+      setEmail(value);
+    } else {
+      setPassword(value);
+    }
+    // Clear error when user starts typing
+    if (error) {
+      dispatch(clearError());
+    }
+  };
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     dispatch(clearError());
@@ -52,21 +68,21 @@ export default function LoginPage() {
       {/* Background Glow Effect */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[400px] lg:w-[500px] h-[300px] sm:h-[400px] lg:h-[500px] bg-primary/20 rounded-full blur-[80px] sm:blur-[100px] pointer-events-none" />
 
-      <div className="z-10 w-full max-w-md space-y-6 sm:space-y-8 px-4 sm:px-6">
-        <div className="text-center space-y-1 sm:space-y-2">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-foreground">
+      <div className="z-10 w-full max-w-md space-y-4 px-4 sm:px-6">
+        <div className="text-center space-y-1">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
             Welcome to <span className="text-primary">FinSight</span>
           </h1>
-          <p className="text-sm sm:text-base text-muted-foreground">The Future of Financial Management.</p>
+          <p className="text-xs sm:text-sm text-muted-foreground">The Future of Financial Management.</p>
         </div>
 
         <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-xl">
-          <CardHeader className="p-4 sm:p-6">
+          <CardHeader className="p-4 pb-3">
             <CardTitle className="sr-only">Login</CardTitle>
             <CardDescription className="sr-only">Enter your credentials to access your account</CardDescription>
           </CardHeader>
-          <CardContent className="p-4 sm:p-6 pt-0">
-            <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
+          <CardContent className="p-4 pt-0">
+            <form onSubmit={handleLogin} className="space-y-3">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -74,7 +90,7 @@ export default function LoginPage() {
                   type="email"
                   placeholder="name@example.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => handleChange("email", e.target.value)}
                   className="bg-secondary/50 border-border/50"
                   disabled={isLoading}
                 />
@@ -86,7 +102,7 @@ export default function LoginPage() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => handleChange("password", e.target.value)}
                     className="bg-secondary/50 border-border/50 pr-10"
                     disabled={isLoading}
                   />
@@ -117,7 +133,7 @@ export default function LoginPage() {
 
               <Button 
                 type="submit" 
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-5 sm:py-6 text-sm sm:text-base"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2.5 text-sm"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -131,12 +147,15 @@ export default function LoginPage() {
               </Button>
             </form>
           </CardContent>
-          <CardFooter className="flex flex-col gap-3 sm:gap-4 p-4 sm:p-6 pt-0">
-            <div className="text-center text-xs sm:text-sm text-primary hover:underline cursor-pointer">
+          <CardFooter className="flex flex-col gap-2 p-4 pt-2">
+            <div className="text-center text-xs text-primary hover:underline cursor-pointer">
               Forgot Password?
             </div>
-            <div className="text-center text-xs sm:text-sm text-muted-foreground">
-              Don&apos;t have an account? <span className="text-primary hover:underline cursor-pointer">Sign Up</span>
+            <div className="text-center text-xs text-muted-foreground">
+              Don&apos;t have an account?{" "}
+              <Link href="/signup" className="text-primary hover:underline">
+                Sign Up
+              </Link>
             </div>
           </CardFooter>
         </Card>

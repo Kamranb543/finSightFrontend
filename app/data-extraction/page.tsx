@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Upload, Loader2, Pencil, Check, X, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
-import { API_BASE_URL } from "@/lib/api/config";
+import { apiClient, ApiError } from "@/lib/api/client";
 
 interface ExtractedData {
   merchant_name: string | null;
@@ -78,21 +78,12 @@ export default function DataExtractionPage() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch(`${API_BASE_URL}/auth/scan-document/`, {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Failed to analyze document");
-      }
-
-      const result = await res.json();
+      const result = await apiClient.post<{ data: ExtractedData }>("/auth/scan-document/", formData);
       setExtractedData(result.data);
+      setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to analyze document");
+      const errorMessage = err instanceof ApiError ? err.message : "Failed to analyze document";
+      setError(errorMessage);
     } finally {
       setIsAnalyzing(false);
     }
@@ -171,17 +162,7 @@ export default function DataExtractionPage() {
         is_approved: false,
       };
 
-      const res = await fetch(`${API_BASE_URL}/auth/transactions/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.detail || "Failed to save transaction");
-      }
+      await apiClient.post("/auth/transactions/", payload);
 
       setSuccessMessage("Transaction saved successfully!");
       

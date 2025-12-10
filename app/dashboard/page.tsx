@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { ArrowUpRight, AlertCircle, TrendingUp, Loader2 } from "lucide-react";
 import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
-import { API_BASE_URL } from "@/lib/api/config";
+import { apiClient } from "@/lib/api/client";
 
 interface Transaction {
   id: number;
@@ -39,13 +39,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/auth/transactions/`, {
-          credentials: "include",
-        });
-
-        if (!res.ok) throw new Error("Failed to fetch");
-
-        const data: Transaction[] = await res.json();
+        const data = await apiClient.get<Transaction[]>("/auth/transactions/");
         setTransactions(data);
 
         // Calculate stats

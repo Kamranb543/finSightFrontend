@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
-import { API_BASE_URL } from "@/lib/api/config";
+import { apiClient, ApiError } from "@/lib/api/client";
 
 type FilterType = "ALL" | "INCOME" | "EXPENSE";
 
@@ -36,18 +36,12 @@ export default function TransactionsPage() {
 
   const fetchTransactions = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/auth/transactions/`, {
-        credentials: "include",
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to fetch transactions");
-      }
-
-      const data = await res.json();
+      const data = await apiClient.get<Transaction[]>("/auth/transactions/");
       setTransactions(data);
+      setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch transactions");
+      const errorMessage = err instanceof ApiError ? err.message : "Failed to fetch transactions";
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -59,23 +53,14 @@ export default function TransactionsPage() {
 
   const handleApprove = async (id: number) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/auth/transactions/${id}/`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ is_approved: true }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to approve transaction");
-      }
-
-      // Update local state
+      await apiClient.patch(`/auth/transactions/${id}/`, { is_approved: true });
       setTransactions((prev) =>
         prev.map((t) => (t.id === id ? { ...t, is_approved: true } : t))
       );
+      setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to approve");
+      const errorMessage = err instanceof ApiError ? err.message : "Failed to approve transaction";
+      setError(errorMessage);
     }
   };
 

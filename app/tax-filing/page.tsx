@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Send, Bot, User, Download, RotateCcw } from "lucide-react";
-import { API_BASE_URL } from "@/lib/api/config";
+import { apiClient, ApiError } from "@/lib/api/client";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 
@@ -64,21 +64,7 @@ export default function TaxFilingPage() {
   const handleInitialGreeting = async () => {
     setIsTyping(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/tax-filing/chat/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ message: "" }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `HTTP ${response.status}: Failed to initialize`);
-      }
-
-      const data = await response.json();
+      const data = await apiClient.post<{ response: string }>("/auth/tax-filing/chat/", { message: "" });
       
       if (!data.response) {
         throw new Error("Invalid response from server");
@@ -94,13 +80,14 @@ export default function TaxFilingPage() {
       setMessages([botMessage]);
     } catch (error) {
       console.error("Error initializing chat:", error);
-      const errorMessage: Message = {
+      const errorMessage = error instanceof ApiError ? error.message : "Sorry, I'm having trouble connecting. Please make sure the backend server is running.";
+      const botMessage: Message = {
         id: Date.now().toString(),
-        text: error instanceof Error ? `Error: ${error.message}` : "Sorry, I'm having trouble connecting. Please make sure the backend server is running.",
+        text: errorMessage,
         sender: "bot",
         timestamp: new Date(),
       };
-      setMessages([errorMessage]);
+      setMessages([botMessage]);
     } finally {
       setIsTyping(false);
     }
@@ -123,18 +110,10 @@ export default function TaxFilingPage() {
     setIsTyping(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/tax-filing/chat/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ message: currentInput }),
-      });
-
-      if (!response.ok) throw new Error("Failed to send message");
-
-      const data = await response.json();
+      const data = await apiClient.post<{ response: string; is_complete?: boolean; tax_summary?: TaxSummary }>(
+        "/auth/tax-filing/chat/",
+        { message: currentInput }
+      );
 
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -151,13 +130,14 @@ export default function TaxFilingPage() {
       }
     } catch (error) {
       console.error("Error sending message:", error);
-      const errorMessage: Message = {
+      const errorMessage = error instanceof ApiError ? error.message : "Sorry, I encountered an error. Please try again.";
+      const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: "Sorry, I encountered an error. Please try again.",
+        text: errorMessage,
         sender: "bot",
         timestamp: new Date(),
       };
-      setMessages((prev) => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, botMessage]);
     } finally {
       setIsTyping(false);
       inputRef.current?.focus();
@@ -166,6 +146,8 @@ export default function TaxFilingPage() {
 
   const handleDownloadPDF = async () => {
     try {
+      // For PDF downloads, we need to use fetch directly to get blob
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api";
       const response = await fetch(`${API_BASE_URL}/auth/tax-filing/download-pdf/`, {
         method: "GET",
         credentials: "include",
@@ -175,7 +157,6 @@ export default function TaxFilingPage() {
         throw new Error("Failed to download PDF");
       }
 
-      // Get the blob and create download link
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -187,7 +168,7 @@ export default function TaxFilingPage() {
       document.body.removeChild(a);
     } catch (error) {
       console.error("Error downloading PDF:", error);
-      alert("Failed to download PDF. Please try again.");
+      alert(error instanceof Error ? error.message : "Failed to download PDF. Please try again.");
     }
   };
 
@@ -198,14 +179,7 @@ export default function TaxFilingPage() {
 
     setIsResetting(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/tax-filing/reset/`, {
-        method: "POST",
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to reset session");
-      }
+      await apiClient.post("/auth/tax-filing/reset/");
 
       // Clear local state
       setMessages([]);
@@ -217,7 +191,8 @@ export default function TaxFilingPage() {
       await handleInitialGreeting();
     } catch (error) {
       console.error("Error resetting session:", error);
-      alert("Failed to reset session. Please try again.");
+      const errorMessage = error instanceof ApiError ? error.message : "Failed to reset session. Please try again.";
+      alert(errorMessage);
     } finally {
       setIsResetting(false);
     }
