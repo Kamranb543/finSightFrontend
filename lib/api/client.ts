@@ -86,14 +86,14 @@ async function apiRequest<T>(
           const data = await response.json();
           
           // Handle Django REST Framework validation errors
-          if (response.status === 400 && typeof data === 'object') {
+          if (response.status === 400 && typeof data === 'object' && data !== null) {
             const fieldErrors: string[] = [];
             for (const [field, messages] of Object.entries(data)) {
               if (Array.isArray(messages)) {
                 fieldErrors.push(`${field}: ${messages.join(', ')}`);
               } else if (typeof messages === 'string') {
                 fieldErrors.push(`${field}: ${messages}`);
-              } else if (typeof messages === 'object') {
+              } else if (typeof messages === 'object' && messages !== null) {
                 // Handle nested errors
                 for (const [key, value] of Object.entries(messages)) {
                   if (Array.isArray(value)) {
@@ -105,10 +105,10 @@ async function apiRequest<T>(
             if (fieldErrors.length > 0) {
               errorMessage = fieldErrors.join('; ');
             } else {
-              errorMessage = data.detail || data.error || data.message || errorMessage;
+              errorMessage = (data as any).detail || (data as any).error || (data as any).message || errorMessage;
             }
           } else {
-            errorMessage = data.detail || data.error || data.message || errorMessage;
+            errorMessage = (data as any).detail || (data as any).error || (data as any).message || errorMessage;
           }
           errorCode = data.code || errorCode;
         } catch {
