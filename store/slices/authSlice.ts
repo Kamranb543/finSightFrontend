@@ -92,7 +92,11 @@ export const login = createAsyncThunk(
         if (error.code === "NETWORK_ERROR" || error.code === "TIMEOUT") {
           return rejectWithValue(error.message);
         }
-        return rejectWithValue(error.message || "Invalid credentials");
+        // For 401 errors, provide a user-friendly message
+        if (error.status === 401) {
+          return rejectWithValue(error.message || "Invalid username or password. Please try again.");
+        }
+        return rejectWithValue(error.message || "Login failed. Please try again.");
       }
       return rejectWithValue("An unexpected error occurred");
     }

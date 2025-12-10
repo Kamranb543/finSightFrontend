@@ -33,9 +33,9 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     dispatch(fetchCurrentUser());
   };
 
-  // Show loading while checking auth or connecting
-  if (!isChecked || isLoading || isConnecting) {
-    const isServerStarting = error && (error.includes("starting up") || error.includes("connect") || error.includes("timeout"));
+  // Show loading while checking auth
+  if (!isChecked || isLoading) {
+    const isServerStarting = error && (error.includes("starting up") || error.includes("connect"));
     
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
@@ -43,9 +43,9 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <div className="space-y-2">
             <p className="text-sm font-medium text-foreground">
-              {isServerStarting || isConnecting ? "Connecting to server..." : "Loading..."}
+              {isServerStarting ? "Connecting to server..." : "Loading..."}
             </p>
-            {(isServerStarting || isConnecting) && (
+            {isServerStarting && (
               <p className="text-xs text-muted-foreground max-w-md">
                 The server may be starting up. This usually takes a few seconds.
               </p>

@@ -88,7 +88,17 @@ async function apiRequest<T>(
           
           if (data && typeof data === 'object' && !Array.isArray(data)) {
             const dataObj = data as Record<string, unknown>;
-            errorMessage = (dataObj.detail as string) || (dataObj.error as string) || (dataObj.message as string) || errorMessage;
+            // Check for Simple JWT error format (detail field)
+            // Also check for non_field_errors array (Django REST Framework format)
+            if (dataObj.detail) {
+              errorMessage = String(dataObj.detail);
+            } else if (dataObj.non_field_errors && Array.isArray(dataObj.non_field_errors) && dataObj.non_field_errors.length > 0) {
+              errorMessage = dataObj.non_field_errors[0] as string;
+            } else if (dataObj.error) {
+              errorMessage = String(dataObj.error);
+            } else if (dataObj.message) {
+              errorMessage = String(dataObj.message);
+            }
             errorCode = (dataObj.code as string) || errorCode;
           }
         } catch {

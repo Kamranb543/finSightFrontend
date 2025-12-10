@@ -23,9 +23,6 @@ export default function LoginPage() {
   const { isAuthenticated, isLoading, isChecked, error } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
-    // Clear any previous errors when component mounts
-    dispatch(clearError());
-    
     // Check auth status on mount
     if (!isChecked && !isLoading) {
       dispatch(fetchCurrentUser());
@@ -49,16 +46,16 @@ export default function LoginPage() {
     } else {
       setPassword(value);
     }
-    // Don't clear error immediately - let user see it
+    // Clear error when user starts typing (only if there's an error)
+    if (error) {
+      dispatch(clearError());
+    }
   };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     // Extract username from email (part before @)
     const username = email.split("@")[0];
-    if (!username || !password) {
-      return;
-    }
     dispatch(clearError());
     dispatch(login({ username, password }));
   };
@@ -126,7 +123,7 @@ export default function LoginPage() {
               </div>
 
               {error && (
-                <div className="text-sm text-destructive font-medium text-center">
+                <div className="text-sm text-destructive font-medium text-center p-2 bg-destructive/10 border border-destructive/20 rounded-md">
                   {error}
                 </div>
               )}
