@@ -85,32 +85,11 @@ async function apiRequest<T>(
         try {
           const data = await response.json();
           
-          // Handle Django REST Framework validation errors
-          if (response.status === 400 && typeof data === 'object' && data !== null) {
-            const fieldErrors: string[] = [];
-            for (const [field, messages] of Object.entries(data)) {
-              if (Array.isArray(messages)) {
-                fieldErrors.push(`${field}: ${messages.join(', ')}`);
-              } else if (typeof messages === 'string') {
-                fieldErrors.push(`${field}: ${messages}`);
-              } else if (typeof messages === 'object' && messages !== null) {
-                // Handle nested errors
-                for (const [key, value] of Object.entries(messages)) {
-                  if (Array.isArray(value)) {
-                    fieldErrors.push(`${field}.${key}: ${value.join(', ')}`);
-                  }
-                }
-              }
-            }
-            if (fieldErrors.length > 0) {
-              errorMessage = fieldErrors.join('; ');
-            } else {
-              errorMessage = (data as any).detail || (data as any).error || (data as any).message || errorMessage;
-            }
-          } else {
-            errorMessage = (data as any).detail || (data as any).error || (data as any).message || errorMessage;
+          if (data && typeof data === 'object' && !Array.isArray(data)) {
+            const dataObj = data as Record<string, unknown>;
+            errorMessage = (dataObj.detail as string) || (dataObj.error as string) || (dataObj.message as string) || errorMessage;
+            errorCode = (dataObj.code as string) || errorCode;
           }
-          errorCode = data.code || errorCode;
         } catch {
           // If response is not JSON, use status text
           errorMessage = response.statusText || errorMessage;
