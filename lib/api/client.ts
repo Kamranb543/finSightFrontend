@@ -84,10 +84,11 @@ async function apiRequest<T>(
         let errorCode = "UNKNOWN_ERROR";
 
         // Set user-friendly default messages based on status code
+        // Note: These defaults will be overridden if the API returns a specific error message
         if (response.status === 400) {
           errorMessage = "Invalid request. Please check your input and try again.";
         } else if (response.status === 401) {
-          errorMessage = "Invalid username or password. Please try again.";
+          errorMessage = "Authentication required. Please log in.";
         } else if (response.status === 403) {
           errorMessage = "You don't have permission to perform this action.";
         } else if (response.status === 404) {

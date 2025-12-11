@@ -41,17 +41,27 @@ export const register = createAsyncThunk(
       await apiClient.post("/auth/register/", userData, { skipCredentials: true });
 
       // Step 2: Auto-login after registration
+      // Note: Don't skip credentials for login - we need cookies to be set
       try {
         await apiClient.post("/auth/login/", {
           username: userData.username,
           password: userData.password,
-        });
+        }, { skipCredentials: false });
+
+        // Small delay to ensure cookies are set (especially for iOS)
+        await new Promise(resolve => setTimeout(resolve, 100));
 
         const user = await apiClient.get<User>("/auth/me/");
         return user;
       } catch (loginError) {
         // Registration succeeded but login failed
         if (loginError instanceof ApiError) {
+          // Check if it's a cookie/authentication issue (common on iOS)
+          if (loginError.status === 401 && loginError.message.toLowerCase().includes("credentials were not provided")) {
+            return rejectWithValue(
+              "Account created successfully, but automatic login failed. This may be due to cookie restrictions on your device. Please try logging in manually."
+            );
+          }
           return rejectWithValue(
             "Account created successfully, but automatic login failed. Please try logging in manually."
           );
@@ -85,6 +95,9 @@ export const login = createAsyncThunk(
     try {
       await apiClient.post("/auth/login/", credentials);
 
+      // Small delay to ensure cookies are set (especially important for iOS Safari)
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       const user = await apiClient.get<User>("/auth/me/");
       return user;
     } catch (error) {
@@ -92,8 +105,20 @@ export const login = createAsyncThunk(
         if (error.code === "NETWORK_ERROR" || error.code === "TIMEOUT") {
           return rejectWithValue(error.message);
         }
-        // For 401 errors, provide a user-friendly message
+        // For 401 errors, check if it's missing credentials or invalid credentials
         if (error.status === 401) {
+          // If the error message indicates missing credentials, show that
+          if (error.message && error.message.toLowerCase().includes("credentials were not provided")) {
+            // Check if we're on iOS (common cookie blocking issue)
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            if (isIOS) {
+              return rejectWithValue(
+                "Authentication failed. This may be due to cookie restrictions on iOS. Please ensure cookies are enabled in Safari settings and try again."
+              );
+            }
+            return rejectWithValue("Please log in to continue.");
+          }
+          // Otherwise, it's likely invalid credentials during login
           return rejectWithValue(error.message || "Invalid username or password. Please try again.");
         }
         return rejectWithValue(error.message || "Login failed. Please try again.");
@@ -123,6 +148,13 @@ export const fetchCurrentUser = createAsyncThunk(
     } catch (error) {
       if (error instanceof ApiError) {
         if (error.status === 401 || error.status === 403) {
+          // Check if we're on iOS (common cookie blocking issue)
+          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+          if (isIOS && error.message && error.message.toLowerCase().includes("credentials were not provided")) {
+            return rejectWithValue(
+              "Authentication failed. This may be due to cookie restrictions on iOS. Please ensure cookies are enabled in Safari settings."
+            );
+          }
           return rejectWithValue("Not authenticated");
         }
         if (error.code === "NETWORK_ERROR" || error.code === "TIMEOUT") {
