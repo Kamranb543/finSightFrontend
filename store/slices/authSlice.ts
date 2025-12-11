@@ -43,10 +43,16 @@ export const register = createAsyncThunk(
       // Step 2: Auto-login after registration
       // Note: Don't skip credentials for login - we need cookies to be set
       try {
-        await apiClient.post("/auth/login/", {
+        const loginResponse = await apiClient.post<{ message: string; access: string; refresh: string }>("/auth/login/", {
           username: userData.username,
           password: userData.password,
         }, { skipCredentials: false });
+        
+        // Store tokens in localStorage as fallback for iOS Safari (cookies may be blocked)
+        if (loginResponse.access && loginResponse.refresh && typeof window !== "undefined") {
+          localStorage.setItem("access_token", loginResponse.access);
+          localStorage.setItem("refresh_token", loginResponse.refresh);
+        }
 
         // Small delay to ensure cookies are set (especially for iOS)
         await new Promise(resolve => setTimeout(resolve, 100));
@@ -93,7 +99,13 @@ export const login = createAsyncThunk(
   "auth/login",
   async (credentials: { username: string; password: string }, { rejectWithValue }) => {
     try {
-      await apiClient.post("/auth/login/", credentials);
+      const response = await apiClient.post<{ message: string; access: string; refresh: string }>("/auth/login/", credentials);
+      
+      // Store tokens in localStorage as fallback for iOS Safari (cookies may be blocked)
+      if (response.access && response.refresh && typeof window !== "undefined") {
+        localStorage.setItem("access_token", response.access);
+        localStorage.setItem("refresh_token", response.refresh);
+      }
 
       // Small delay to ensure cookies are set (especially important for iOS Safari)
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -134,6 +146,11 @@ export const logout = createAsyncThunk("auth/logout", async () => {
     await apiClient.post("/auth/logout/");
   } catch (error) {
     // Ignore logout errors
+  }
+  // Clear tokens from localStorage
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
   }
   return null;
 });

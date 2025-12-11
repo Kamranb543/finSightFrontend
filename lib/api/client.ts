@@ -64,13 +64,39 @@ async function apiRequest<T>(
 
   const url = `${API_BASE_URL}${endpoint}`;
   console.log(url);
+  
+  // Get token from localStorage as fallback for iOS Safari (cookies may be blocked)
+  const accessToken = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+  
+  // Build headers object
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  
+  // Merge with existing headers if they exist
+  if (fetchOptions.headers) {
+    if (fetchOptions.headers instanceof Headers) {
+      fetchOptions.headers.forEach((value, key) => {
+        headers[key] = value;
+      });
+    } else if (Array.isArray(fetchOptions.headers)) {
+      fetchOptions.headers.forEach(([key, value]) => {
+        headers[key] = value;
+      });
+    } else {
+      Object.assign(headers, fetchOptions.headers);
+    }
+  }
+  
+  // Add Authorization header if token exists (for iOS Safari fallback)
+  if (accessToken && !skipCredentials) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
+  }
+  
   const requestOptions: RequestInit = {
     ...fetchOptions,
     credentials: skipCredentials ? "omit" : "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...fetchOptions.headers,
-    },
+    headers,
   };
 
   let lastError: Error | ApiError = new Error("Unknown error");
