@@ -80,8 +80,21 @@ async function apiRequest<T>(
       const response = await fetchWithTimeout(url, requestOptions, timeout);
 
       if (!response.ok) {
-        let errorMessage = `Request failed with status ${response.status}`;
+        let errorMessage = "An error occurred. Please try again.";
         let errorCode = "UNKNOWN_ERROR";
+
+        // Set user-friendly default messages based on status code
+        if (response.status === 400) {
+          errorMessage = "Invalid request. Please check your input and try again.";
+        } else if (response.status === 401) {
+          errorMessage = "Invalid username or password. Please try again.";
+        } else if (response.status === 403) {
+          errorMessage = "You don't have permission to perform this action.";
+        } else if (response.status === 404) {
+          errorMessage = "The requested resource was not found.";
+        } else if (response.status === 500) {
+          errorMessage = "Server error. Please try again later.";
+        }
 
         try {
           const data = await response.json();
@@ -102,8 +115,10 @@ async function apiRequest<T>(
             errorCode = (dataObj.code as string) || errorCode;
           }
         } catch {
-          // If response is not JSON, use status text
-          errorMessage = response.statusText || errorMessage;
+          // If response is not JSON, use status text if available, otherwise keep default
+          if (response.statusText) {
+            errorMessage = response.statusText;
+          }
         }
 
         // Don't retry on client errors (4xx), except 408 (timeout)

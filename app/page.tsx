@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
@@ -46,17 +47,40 @@ export default function LoginPage() {
     } else {
       setPassword(value);
     }
-    // Clear error when user starts typing (only if there's an error)
+    // Clear errors when user starts typing
     if (error) {
       dispatch(clearError());
+    }
+    if (validationError) {
+      setValidationError(null);
     }
   };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Client-side validation
+    setValidationError(null);
+    dispatch(clearError());
+    
+    if (!email.trim()) {
+      setValidationError("Please enter your email address");
+      return;
+    }
+    
+    if (!password.trim()) {
+      setValidationError("Please enter your password");
+      return;
+    }
+    
+    // Basic email format validation
+    if (!email.includes("@") || !email.includes(".")) {
+      setValidationError("Please enter a valid email address");
+      return;
+    }
+    
     // Extract username from email (part before @)
     const username = email.split("@")[0];
-    dispatch(clearError());
     dispatch(login({ username, password }));
   };
 
@@ -122,9 +146,9 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {error && (
+              {(validationError || error) && (
                 <div className="text-sm text-destructive font-medium text-center p-2 bg-destructive/10 border border-destructive/20 rounded-md">
-                  {error}
+                  {validationError || error}
                 </div>
               )}
 
